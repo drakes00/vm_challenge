@@ -1,9 +1,10 @@
 --- Loads the binary challenge file.
--- Reads 'challenge.bin' as a binary file, interpreting it as a sequence
+-- Reads the specified binary file, interpreting it as a sequence
 -- of 16-bit little-endian integers.
+-- @param filename string The path to the binary file to load.
 -- @return table A list of 16-bit integers representing the program memory.
-local function loadBinary()
-	local handle = assert(io.open("challenge.bin", "rb"))
+local function loadBinary(filename)
+	local handle = assert(io.open(filename, "rb"))
 	local content = handle:read("*all")
 	handle:close()
 

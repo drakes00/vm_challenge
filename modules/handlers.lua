@@ -44,6 +44,7 @@ end
 
 --- Output Character (19).
 -- Writes a single character to the standard output.
+-- @param _ table Unused registers table.
 -- @param char number The ASCII code of the character to print.
 local function h19_out(_, char)
 	io.write(string.char(char))

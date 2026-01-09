@@ -7,20 +7,17 @@
 -- Description: Interpreter for Synacor Challenge
 
 local handlers = require("modules.handlers")
+local mmu = require("modules.mmu")
 local utils = require("modules.utils")
+local disassemble = require("modules.disassemble")
 
--- First load the binary.
-local code = utils.loadBinary()
-
--- This will later contain all 8 registers.
-local registers = {
-	pc = 1,
-}
+-- This will store the opcode handlers.
+local opcodes = nil
 
 --- Advances the Program Counter (PC).
 -- Increments the pc register by 1 to point to the next instruction or argument.
 local function next()
-	registers.pc = registers.pc + 1
+	mmu.registers.pc = mmu.registers.pc + 1
 end
 
 --- Fetches the current instruction.
@@ -29,12 +26,15 @@ end
 -- @return function The handler function for the opcode.
 -- @return number The number of arguments the opcode expects.
 local function fetch()
-	local opcode = code[registers.pc]
-	local opcodeInfo = handlers.opcodes[opcode]
+	assert(opcodes)
+	local opcode = mmu.code[mmu.registers.pc]
+	local opcodeInfo = opcodes[opcode]
 	if opcodeInfo == nil then
-		error(string.format("[Illegal instruction] 0x%08x: 0x%02x (%d)", utils.realAddr(registers.pc), opcode, opcode))
+		error(
+			string.format("[Illegal instruction] 0x%08x: 0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode)
+		)
 	else
-		-- print(string.format("[DBG] 0x%08x: 0x%02x (%d)", utils.realAddr(registers.pc), opcode, opcode))
+		-- print(string.format("[DBG] 0x%08x: 0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
 		return opcodeInfo.handler, opcodeInfo.nargs
 	end
 end
@@ -45,9 +45,9 @@ end
 -- @param nargs number The number of arguments to read.
 -- @return table A list of arguments.
 local function loadArgs(nargs)
-	local args = { registers }
+	local args = { mmu.registers }
 	while nargs > 0 do
-		table.insert(args, code[registers.pc])
+		table.insert(args, mmu.loadArg())
 		next()
 		nargs = nargs - 1
 	end
@@ -55,11 +55,41 @@ local function loadArgs(nargs)
 	return args
 end
 
--- Main fetch and execute loop.
-while registers.pc <= #code do
-	local handler, nargs = fetch()
-	next()
+--- Main entry point.
+-- Parses command line arguments and starts the VM or disassembler.
+local function main()
+	local filename
+	local mode = "run"
 
-	local args = loadArgs(nargs)
-	handler(table.unpack(args))
+	for i = 1, #arg do
+		if arg[i] == "-d" then
+			mode = "disassemble"
+		else
+			filename = arg[i]
+		end
+	end
+
+	if not filename then
+		print(string.format("Usage: %s <binary> [-d]", arg[0]))
+		os.exit(1)
+	end
+
+	mmu.init(filename)
+
+	if mode == "disassemble" then
+		opcodes = disassemble.opcodes
+	else
+		opcodes = handlers.opcodes
+	end
+
+	-- Main fetch and execute loop.
+	while mmu.registers.pc <= #mmu.code do
+		local handler, nargs = fetch()
+		next()
+
+		local args = loadArgs(nargs)
+		handler(table.unpack(args))
+	end
 end
+
+main()
