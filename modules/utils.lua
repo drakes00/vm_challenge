@@ -7,19 +7,15 @@ local function loadBinary()
 	local content = handle:read("*all")
 	handle:close()
 
-	-- Convert the binary string to a table of bytes (0-255)
-	local bytes = {}
+	-- Convert the binary string to a table of 2 bytes words in little endian.
+	local mem = {}
 	for i = 1, #content, 2 do
-		local byte1 = string.byte(content, i)
-		local byte2 = string.byte(content, i + 1) or 0 -- Use 0 if no second byte
-
-		-- Combine into a 16-bit value (little-endian: byte1 is LSB, byte2 is MSB)
-		local short = (byte2 << 8) + byte1
-
-		table.insert(bytes, short)
+		local b1 = string.byte(content, i)
+		local b2 = string.byte(content, i + 1) or 0
+		table.insert(mem, b1 + (b2 << 8))
 	end
 
-	return bytes
+	return mem
 end
 
 --- Dumps the contents of a table to stdout.
@@ -27,11 +23,20 @@ end
 -- @param t table The table to inspect.
 local function dump(t)
 	for key, value in pairs(t) do
-		print(key, value)
+		print(string.format("0x%04x (%d): ", key, key) .. value)
 	end
+end
+
+--- Converts a Lua 1-based index to a VM 0-based address.
+-- Helper function to map internal Lua table indices to the architectural address space.
+-- @param addr number The 1-based index from the Lua memory table.
+-- @return number The corresponding 0-based address in the VM architecture.
+local function realAddr(addr)
+	return (addr - 1)
 end
 
 return {
 	loadBinary = loadBinary,
 	dump = dump,
+	realAddr = realAddr,
 }

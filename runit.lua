@@ -10,7 +10,7 @@ local handlers = require("modules.handlers")
 local utils = require("modules.utils")
 
 -- First load the binary.
-local bytes = utils.loadBinary()
+local code = utils.loadBinary()
 
 -- This will later contain all 8 registers.
 local registers = {
@@ -29,11 +29,12 @@ end
 -- @return function The handler function for the opcode.
 -- @return number The number of arguments the opcode expects.
 local function fetch()
-	local opcode = bytes[registers.pc]
+	local opcode = code[registers.pc]
 	local opcodeInfo = handlers.opcodes[opcode]
 	if opcodeInfo == nil then
-		error("Illegal instruction: " .. opcode)
+		error(string.format("[Illegal instruction] 0x%08x: 0x%02x (%d)", utils.realAddr(registers.pc), opcode, opcode))
 	else
+		-- print(string.format("[DBG] 0x%08x: 0x%02x (%d)", utils.realAddr(registers.pc), opcode, opcode))
 		return opcodeInfo.handler, opcodeInfo.nargs
 	end
 end
@@ -44,9 +45,9 @@ end
 -- @param nargs number The number of arguments to read.
 -- @return table A list of arguments.
 local function loadArgs(nargs)
-	local args = {}
+	local args = { registers }
 	while nargs > 0 do
-		table.insert(args, bytes[registers.pc])
+		table.insert(args, code[registers.pc])
 		next()
 		nargs = nargs - 1
 	end
@@ -55,8 +56,7 @@ local function loadArgs(nargs)
 end
 
 -- Main fetch and execute loop.
-while registers.pc <= #bytes do
-	-- Ensure instruction is implemented!
+while registers.pc <= #code do
 	local handler, nargs = fetch()
 	next()
 
