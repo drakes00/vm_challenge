@@ -9,6 +9,20 @@ local function h1_set(_, reg, val)
 	reg.value = val.value
 end
 
+--- Equality (4).
+-- Sets register <a> to 1 if <b> is equal to <c>; set it to 0 otherwise.
+-- @param _ table Unused registers table.
+-- @param a table The register to store the result in.
+-- @param b table The first value to compare.
+-- @param c table The second value to compare.
+local function h4_eq(_, a, b, c)
+	if b.value == c.value then
+		a.value = 1
+	else
+		a.value = 0
+	end
+end
+
 --- Jump (6).
 -- Unconditionally jump to the specified address.
 -- Updates the program counter (PC) to the target address.
@@ -46,6 +60,16 @@ local function h8_jf(registers, test, addr)
 	end
 end
 
+--- Addition (9).
+-- Assign into <a> the sum of <b> and <c> (modulo 32768).
+-- @param _ table Unused registers table.
+-- @param a table The register to store the result in.
+-- @param b table The first operand.
+-- @param c table The second operand.
+local function h9_add(_, a, b, c)
+	a.value = (b.value + c.value) % 0x8000
+end
+
 --- Output Character (19).
 -- Writes a single character to the standard output.
 -- @param _ table Unused registers table.
@@ -62,9 +86,11 @@ local function h21_nop(_) end
 local opcodes = {
 	[0] = { handler = h0_halt, nargs = 0 },
 	[1] = { handler = h1_set, nargs = 2 },
+	[4] = { handler = h4_eq, nargs = 3 },
 	[6] = { handler = h6_jmp, nargs = 1 },
 	[7] = { handler = h7_jt, nargs = 2 },
 	[8] = { handler = h8_jf, nargs = 2 },
+	[9] = { handler = h9_add, nargs = 3 },
 	[19] = { handler = h19_out, nargs = 1 },
 	[21] = { handler = h21_nop, nargs = 0 },
 }

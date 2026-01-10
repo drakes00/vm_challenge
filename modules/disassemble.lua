@@ -14,6 +14,16 @@ local function h1_set(registers, reg, val)
 	print(string.format("%04x: SET %x 0x%04x", registers.pc - 4, reg.value, val.value))
 end
 
+--- Equality (4).
+-- Disassembles the EQ instruction.
+-- @param registers table The VM registers, containing the PC.
+-- @param a table The destination register.
+-- @param b table The first operand.
+-- @param c table The second operand.
+local function h4_eq(registers, a, b, c)
+	print(string.format("%04x: EQ %x, %x, %x", registers.pc - 5, a.value, b.value, c.value))
+end
+
 --- Jump (6).
 -- Disassembles the JMP instruction.
 -- @param registers table The VM registers, containing the PC.
@@ -38,6 +48,16 @@ end
 -- @param addr number The target address.
 local function h8_jf(registers, test, addr)
 	print(string.format("%04x: JF %x 0x%04x", registers.pc - 4, test.value, addr.value))
+end
+
+--- Addition (9).
+-- Disassembles the ADD instruction.
+-- @param registers table The VM registers, containing the PC.
+-- @param a table The destination register.
+-- @param b table The first operand.
+-- @param c table The second operand.
+local function h9_add(registers, a, b, c)
+	print(string.format("%04x: ADD %x, %x, %x", registers.pc - 5, a.value, b.value, c.value))
 end
 
 --- Output Character (19).
@@ -65,9 +85,11 @@ end
 local opcodes = {
 	[0] = { handler = h0_halt, nargs = 0 },
 	[1] = { handler = h1_set, nargs = 2 },
+	[4] = { handler = h4_eq, nargs = 3 },
 	[6] = { handler = h6_jmp, nargs = 1 },
 	[7] = { handler = h7_jt, nargs = 2 },
 	[8] = { handler = h8_jf, nargs = 2 },
+	[9] = { handler = h9_add, nargs = 3 },
 	[19] = { handler = h19_out, nargs = 1 },
 	[21] = { handler = h21_nop, nargs = 0 },
 }

@@ -44,6 +44,29 @@ function TestHandlers:testHalt()
 	lu.assertEquals(self.exit_code, 1)
 end
 
+function TestHandlers:testSet()
+	local h = handlers.opcodes[1].handler
+	local reg = self.registers.reg[1]
+	local val = { value = 123 }
+	h(self.registers, reg, val)
+	lu.assertEquals(reg.value, 123)
+end
+
+function TestHandlers:testEq()
+	local h = handlers.opcodes[4].handler
+	local dest = self.registers.reg[1]
+
+	-- Equal case
+	dest.value = 0
+	h(self.registers, dest, { value = 10 }, { value = 10 })
+	lu.assertEquals(dest.value, 1)
+
+	-- Not equal case
+	dest.value = 1
+	h(self.registers, dest, { value = 10 }, { value = 20 })
+	lu.assertEquals(dest.value, 0)
+end
+
 function TestHandlers:testJmp()
 	local h = handlers.opcodes[6].handler
 	local target = { value = 50 }
@@ -79,6 +102,19 @@ function TestHandlers:testJf()
 	self.registers.pc = 100
 	h(self.registers, { value = 1 }, target)
 	lu.assertEquals(self.registers.pc, 100) -- Should not change
+end
+
+function TestHandlers:testAdd()
+	local h = handlers.opcodes[9].handler
+	local dest = self.registers.reg[1]
+
+	-- Simple addition
+	h(self.registers, dest, { value = 10 }, { value = 20 })
+	lu.assertEquals(dest.value, 30)
+
+	-- Addition with modulo
+	h(self.registers, dest, { value = 32760 }, { value = 10 })
+	lu.assertEquals(dest.value, 2) -- (32760 + 10) % 32768 = 32770 % 32768 = 2
 end
 
 function TestHandlers:testOut()
