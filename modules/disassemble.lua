@@ -11,7 +11,7 @@ end
 -- @param reg number The register to set.
 -- @param val number The value to set the register to.
 local function h1_set(registers, reg, val)
-	print(string.format("%04x: SET %x 0x%04x", registers.pc - 4, reg, val))
+	print(string.format("%04x: SET %x 0x%04x", registers.pc - 4, reg.value, val.value))
 end
 
 --- Jump (6).
@@ -19,7 +19,7 @@ end
 -- @param registers table The VM registers, containing the PC.
 -- @param addr number The target address.
 local function h6_jmp(registers, addr)
-	print(string.format("%04x: JMP 0x%04x", registers.pc - 3, addr))
+	print(string.format("%04x: JMP 0x%04x", registers.pc - 3, addr.value))
 end
 
 --- Jump-if-true (7).
@@ -28,7 +28,7 @@ end
 -- @param test number The value to test.
 -- @param addr number The target address.
 local function h7_jt(registers, test, addr)
-	print(string.format("%04x: JT %x 0x%04x", registers.pc - 4, test, addr))
+	print(string.format("%04x: JT %x 0x%04x", registers.pc - 4, test.value, addr.value))
 end
 
 --- Jump-if-false (8).
@@ -37,7 +37,7 @@ end
 -- @param test number The value to test.
 -- @param addr number The target address.
 local function h8_jf(registers, test, addr)
-	print(string.format("%04x: JF %x 0x%04x", registers.pc - 4, test, addr))
+	print(string.format("%04x: JF %x 0x%04x", registers.pc - 4, test.value, addr.value))
 end
 
 --- Output Character (19).
@@ -45,10 +45,13 @@ end
 -- @param registers table The VM registers, containing the PC.
 -- @param char number The character code to print.
 local function h19_out(registers, char)
-	if char == 10 then
-		char = 95
+	local pchar
+	if char.value == 10 then
+		pchar = 95
+	else
+		pchar = char.value
 	end
-	print(string.format("%04x: OUT %c", registers.pc - 3, char))
+	print(string.format("%04x: OUT %c", registers.pc - 3, pchar))
 end
 
 --- No Operation (21).

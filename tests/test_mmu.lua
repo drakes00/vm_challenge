@@ -7,22 +7,47 @@ function TestMMU:setUp()
 	-- Reset state before each test
 	mmu.code = {}
 	mmu.registers.pc = 1
-	mmu.registers.reg = { 0, 0, 0, 0, 0, 0, 0, 0 }
+	mmu.registers.reg = {
+		{ value = 0 },
+		{ value = 0 },
+		{ value = 0 },
+		{ value = 0 },
+		{ value = 0 },
+		{ value = 0 },
+		{ value = 0 },
+		{ value = 0 },
+	}
 end
 
 function TestMMU:testMapAddressLiteral()
-	lu.assertEquals(mmu.mapAddress(0), 0)
-	lu.assertEquals(mmu.mapAddress(12345), 12345)
-	lu.assertEquals(mmu.mapAddress(32767), 32767)
+	local res = mmu.mapAddress(0)
+	lu.assertIsTable(res)
+	lu.assertEquals(res.value, 0)
+
+	res = mmu.mapAddress(12345)
+	lu.assertIsTable(res)
+	lu.assertEquals(res.value, 12345)
+
+	res = mmu.mapAddress(32767)
+	lu.assertIsTable(res)
+	lu.assertEquals(res.value, 32767)
 end
 
 function TestMMU:testMapAddressRegister()
 	-- Set register values
-	mmu.registers.reg[1] = 42 -- Register 0 (32768 maps to index 1)
-	mmu.registers.reg[8] = 99 -- Register 7 (32775 maps to index 8)
+	mmu.registers.reg[1].value = 42 -- Register 0 (32768 maps to index 1)
+	mmu.registers.reg[8].value = 99 -- Register 7 (32775 maps to index 8)
 
-	lu.assertEquals(mmu.mapAddress(32768), 42)
-	lu.assertEquals(mmu.mapAddress(32775), 99)
+	local res = mmu.mapAddress(32768)
+	lu.assertIsTable(res)
+	lu.assertEquals(res.value, 42)
+	-- Verify it returns the actual register table
+	lu.assertTrue(res == mmu.registers.reg[1])
+
+	res = mmu.mapAddress(32775)
+	lu.assertIsTable(res)
+	lu.assertEquals(res.value, 99)
+	lu.assertTrue(res == mmu.registers.reg[8])
 end
 
 function TestMMU:testMapAddressInvalid()
@@ -31,17 +56,22 @@ end
 
 function TestMMU:testLoadArg()
 	mmu.code = { 10, 32768 } -- 10 (literal), 32768 (Register 0)
-	mmu.registers.reg[1] = 55
+	mmu.registers.reg[1].value = 55
 	mmu.registers.pc = 1
 
 	-- Load first arg (literal 10)
-	lu.assertEquals(mmu.loadArg(), 10)
+	local arg1 = mmu.loadArg()
+	lu.assertIsTable(arg1)
+	lu.assertEquals(arg1.value, 10)
 
 	-- Advance PC (simulation)
 	mmu.registers.pc = 2
 
 	-- Load second arg (Register 0 -> 55)
-	lu.assertEquals(mmu.loadArg(), 55)
+	local arg2 = mmu.loadArg()
+	lu.assertIsTable(arg2)
+	lu.assertEquals(arg2.value, 55)
+	lu.assertTrue(arg2 == mmu.registers.reg[1])
 end
 
 function TestMMU:testInit()

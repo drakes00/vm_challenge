@@ -4,7 +4,19 @@ local handlers = require("modules.handlers")
 TestHandlers = {}
 
 function TestHandlers:setUp()
-	self.registers = { pc = 100, reg = { 0, 0, 0, 0, 0, 0, 0, 0 } }
+	self.registers = {
+		pc = 100,
+		reg = {
+			{ value = 0 },
+			{ value = 0 },
+			{ value = 0 },
+			{ value = 0 },
+			{ value = 0 },
+			{ value = 0 },
+			{ value = 0 },
+			{ value = 0 },
+		},
+	}
 
 	-- Mock os.exit
 	self.orig_exit = os.exit
@@ -34,44 +46,44 @@ end
 
 function TestHandlers:testJmp()
 	local h = handlers.opcodes[6].handler
-	local target = 50
+	local target = { value = 50 }
 	h(self.registers, target)
-	lu.assertEquals(self.registers.pc, target + 1)
+	lu.assertEquals(self.registers.pc, target.value + 1)
 end
 
 function TestHandlers:testJt()
 	local h = handlers.opcodes[7].handler
-	local target = 50
+	local target = { value = 50 }
 
 	-- Case: True (non-zero)
 	self.registers.pc = 100
-	h(self.registers, 1, target)
-	lu.assertEquals(self.registers.pc, target + 1)
+	h(self.registers, { value = 1 }, target)
+	lu.assertEquals(self.registers.pc, target.value + 1)
 
 	-- Case: False (zero)
 	self.registers.pc = 100
-	h(self.registers, 0, target)
+	h(self.registers, { value = 0 }, target)
 	lu.assertEquals(self.registers.pc, 100) -- Should not change
 end
 
 function TestHandlers:testJf()
 	local h = handlers.opcodes[8].handler
-	local target = 50
+	local target = { value = 50 }
 
 	-- Case: True (zero)
 	self.registers.pc = 100
-	h(self.registers, 0, target)
-	lu.assertEquals(self.registers.pc, target + 1)
+	h(self.registers, { value = 0 }, target)
+	lu.assertEquals(self.registers.pc, target.value + 1)
 
 	-- Case: False (non-zero)
 	self.registers.pc = 100
-	h(self.registers, 1, target)
+	h(self.registers, { value = 1 }, target)
 	lu.assertEquals(self.registers.pc, 100) -- Should not change
 end
 
 function TestHandlers:testOut()
 	local h = handlers.opcodes[19].handler
-	local char_code = string.byte("A")
+	local char_code = { value = string.byte("A") }
 	h(self.registers, char_code)
 	lu.assertEquals(self.stdout, "A")
 end

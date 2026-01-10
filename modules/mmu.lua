@@ -7,7 +7,16 @@ mmu.code = {}
 -- This will later contain all 8 registers.
 mmu.registers = {
 	pc = 1,
-	reg = { 0, 0, 0, 0, 0, 0, 0, 0 },
+	reg = {
+		{ value = 0 },
+		{ value = 0 },
+		{ value = 0 },
+		{ value = 0 },
+		{ value = 0 },
+		{ value = 0 },
+		{ value = 0 },
+		{ value = 0 },
+	},
 }
 
 mmu.stack = {}
@@ -25,8 +34,9 @@ end
 -- @return number The value at the address or the value contained in the register.
 -- @error Throws a "Segmentation Fault" error if the address is out of bounds.
 function mmu.mapAddress(addr)
+	-- print(string.format("[MMU] Accessing addr: 0x%04x", addr))
 	if addr < 0x8000 then
-		return addr
+		return { value = addr }
 	elseif addr < 0x8008 then
 		addr = addr % 0x8000
 		return mmu.registers.reg[addr + 1]
@@ -44,4 +54,3 @@ function mmu.loadArg()
 end
 
 return mmu
-
