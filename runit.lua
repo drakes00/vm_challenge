@@ -46,7 +46,7 @@ end
 -- @param nargs number The number of arguments to read.
 -- @return table A list of arguments.
 function VM.loadArgs(nargs)
-	local args = { mmu.registers }
+	local args = { mmu }
 	local idx = 2
 	for _ = 1, nargs do
 		args[idx] = mmu.loadArg()
@@ -63,6 +63,7 @@ function VM.step()
 	VM.next()
 
 	local args_vals = VM.loadArgs(nargs)
+	--
 	-- Using explicit bounds for unpack to handle potential nil values correctly
 	handler(table.unpack(args_vals, 1, nargs + 1))
 end
@@ -120,3 +121,4 @@ if not pcall(debug.getlocal, 4, 1) then
 end
 
 return VM
+

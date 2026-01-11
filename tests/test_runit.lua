@@ -60,7 +60,7 @@ function TestRunit:testLoadArgsWithHoles()
 	mmu.loadArg = orig_loadArg
 
 	-- Verify args individually, as #args is unreliable with holes
-	lu.assertEquals(args[1], mmu.registers)
+	lu.assertEquals(args[1], mmu)
 	lu.assertIsNil(args[2])
 	lu.assertIsTable(args[3])
 	lu.assertEquals(args[3].value, 42)
@@ -96,7 +96,7 @@ function TestRunit:testStep()
 	mmu.loadArg = orig_loadArg
 
 	lu.assertEquals(#captured_args, 3)
-	lu.assertEquals(captured_args[1], mmu.registers)
+	lu.assertEquals(captured_args[1], mmu)
 	lu.assertEquals(captured_args[2].value, 10)
 	lu.assertEquals(captured_args[3].value, 20)
 	lu.assertEquals(mmu.registers.pc, 4)
