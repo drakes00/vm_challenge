@@ -50,6 +50,20 @@ local function h4_eq(_, a, b, c)
 	end
 end
 
+--- Greater Than (5).
+-- Sets register <a> to 1 if <b> is greater than <c>; set it to 0 otherwise.
+-- @param _ table Unused MMU table.
+-- @param a table The register to store the result in.
+-- @param b table The first value to compare.
+-- @param c table The second value to compare.
+local function h5_gt(_, a, b, c)
+	if b.value > c.value then
+		a.value = 1
+	else
+		a.value = 0
+	end
+end
+
 --- Jump (6).
 -- Unconditionally jump to the specified address.
 -- Updates the program counter (PC) to the target address.
@@ -111,6 +125,7 @@ local opcodes = {
 	[2] = { handler = h2_push, nargs = 1 },
 	[3] = { handler = h3_pop, nargs = 1 },
 	[4] = { handler = h4_eq, nargs = 3 },
+	[5] = { handler = h5_gt, nargs = 3 },
 	[6] = { handler = h6_jmp, nargs = 1 },
 	[7] = { handler = h7_jt, nargs = 2 },
 	[8] = { handler = h8_jf, nargs = 2 },

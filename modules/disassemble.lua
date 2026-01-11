@@ -40,6 +40,16 @@ local function h4_eq(mmu, a, b, c)
 	print(string.format("%04x: EQ %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
 end
 
+--- Greater Than (5).
+-- Disassembles the GT instruction.
+-- @param mmu table The MMU, containing the PC.
+-- @param a table The destination register.
+-- @param b table The first operand.
+-- @param c table The second operand.
+local function h5_gt(mmu, a, b, c)
+	print(string.format("%04x: GT %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
+end
+
 --- Jump (6).
 -- Disassembles the JMP instruction.
 -- @param mmu table The MMU, containing the PC.
@@ -104,6 +114,7 @@ local opcodes = {
 	[2] = { handler = h2_push, nargs = 1 },
 	[3] = { handler = h3_pop, nargs = 1 },
 	[4] = { handler = h4_eq, nargs = 3 },
+	[5] = { handler = h5_gt, nargs = 3 },
 	[6] = { handler = h6_jmp, nargs = 1 },
 	[7] = { handler = h7_jt, nargs = 2 },
 	[8] = { handler = h8_jf, nargs = 2 },

@@ -101,6 +101,23 @@ function TestHandlers:testEq()
 	lu.assertEquals(dest.value, 0)
 end
 
+function TestHandlers:testGt()
+	local h = handlers.opcodes[5].handler
+	local dest = self.mmu.registers.reg[1]
+
+	-- Greater than case
+	h(self.mmu, dest, { value = 20 }, { value = 10 })
+	lu.assertEquals(dest.value, 1)
+
+	-- Equal case (should be 0)
+	h(self.mmu, dest, { value = 10 }, { value = 10 })
+	lu.assertEquals(dest.value, 0)
+
+	-- Less than case (should be 0)
+	h(self.mmu, dest, { value = 10 }, { value = 20 })
+	lu.assertEquals(dest.value, 0)
+end
+
 function TestHandlers:testJmp()
 	local h = handlers.opcodes[6].handler
 	local target = { value = 50 }
