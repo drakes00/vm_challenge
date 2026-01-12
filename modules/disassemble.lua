@@ -86,6 +86,35 @@ local function h9_add(mmu, a, b, c)
 	print(string.format("%04x: ADD %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
 end
 
+--- Logical And (12).
+-- Disassembles the AND instruction.
+-- @param mmu table The MMU, containing the PC.
+-- @param a table The destination register.
+-- @param b table The first operand.
+-- @param c table The second operand.
+local function h12_and(mmu, a, b, c)
+	print(string.format("%04x: AND %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
+end
+
+--- Logical Or (13).
+-- Disassembles the OR instruction.
+-- @param mmu table The MMU, containing the PC.
+-- @param a table The destination register.
+-- @param b table The first operand.
+-- @param c table The second operand.
+local function h13_or(mmu, a, b, c)
+	print(string.format("%04x: OR %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
+end
+
+--- Logical Not (14).
+-- Disassembles the NOT instruction.
+-- @param mmu table The MMU, containing the PC.
+-- @param a table The destination register.
+-- @param b table The first operand.
+local function h14_not(mmu, a, b)
+	print(string.format("%04x: NOT %x, %x", mmu.registers.pc - 4, a.value, b.value))
+end
+
 --- Output Character (19).
 -- Disassembles the OUT instruction.
 -- @param mmu table The MMU, containing the PC.
@@ -119,6 +148,9 @@ local opcodes = {
 	[7] = { handler = h7_jt, nargs = 2 },
 	[8] = { handler = h8_jf, nargs = 2 },
 	[9] = { handler = h9_add, nargs = 3 },
+	[12] = { handler = h12_and, nargs = 3 },
+	[13] = { handler = h13_or, nargs = 3 },
+	[14] = { handler = h14_not, nargs = 2 },
 	[19] = { handler = h19_out, nargs = 1 },
 	[21] = { handler = h21_nop, nargs = 0 },
 }

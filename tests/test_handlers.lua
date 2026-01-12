@@ -168,6 +168,30 @@ function TestHandlers:testAdd()
 	lu.assertEquals(dest.value, 2) -- (32760 + 10) % 32768 = 2
 end
 
+function TestHandlers:testAnd()
+	local h = handlers.opcodes[12].handler
+	local dest = self.mmu.registers.reg[1]
+
+	h(self.mmu, dest, { value = 0x1F }, { value = 0x0A })
+	lu.assertEquals(dest.value, 0x0A) -- 011111 & 001010 = 001010 (0x0A)
+end
+
+function TestHandlers:testOr()
+	local h = handlers.opcodes[13].handler
+	local dest = self.mmu.registers.reg[1]
+
+	h(self.mmu, dest, { value = 0x10 }, { value = 0x01 })
+	lu.assertEquals(dest.value, 0x11) -- 10000 | 00001 = 10001
+end
+
+function TestHandlers:testNot()
+	local h = handlers.opcodes[14].handler
+	local dest = self.mmu.registers.reg[1]
+
+	h(self.mmu, dest, { value = 0x000F })
+	lu.assertEquals(dest.value, 0x7FF0) -- ~0...01111 = 1...10000. & 0x7FFF = 0x7FF0
+end
+
 function TestHandlers:testOut()
 	local h = handlers.opcodes[19].handler
 	local char_code = { value = string.byte("A") }

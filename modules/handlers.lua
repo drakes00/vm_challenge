@@ -105,6 +105,35 @@ local function h9_add(_, a, b, c)
 	a.value = (b.value + c.value) % 0x8000
 end
 
+--- Logical And (12).
+-- Stores into <a> the bitwise AND of <b> and <c>.
+-- @param _ table Unused MMU table.
+-- @param a table The destination register.
+-- @param b table The first operand.
+-- @param c table The second operand.
+local function h12_and(_, a, b, c)
+	a.value = b.value & c.value
+end
+
+--- Logical Or (13).
+-- Stores into <a> the bitwise OR of <b> and <c>.
+-- @param _ table Unused MMU table.
+-- @param a table The destination register.
+-- @param b table The first operand.
+-- @param c table The second operand.
+local function h13_or(_, a, b, c)
+	a.value = b.value | c.value
+end
+
+--- Logical Not (14).
+-- Stores 15-bit bitwise inverse of <b> in <a>.
+-- @param _ table Unused MMU table.
+-- @param a table The destination register.
+-- @param b table The operand.
+local function h14_not(_, a, b)
+	a.value = ~b.value & 0x7fff
+end
+
 --- Output Character (19).
 -- Writes a single character to the standard output.
 -- @param _ table Unused MMU table.
@@ -130,6 +159,9 @@ local opcodes = {
 	[7] = { handler = h7_jt, nargs = 2 },
 	[8] = { handler = h8_jf, nargs = 2 },
 	[9] = { handler = h9_add, nargs = 3 },
+	[12] = { handler = h12_and, nargs = 3 },
+	[13] = { handler = h13_or, nargs = 3 },
+	[14] = { handler = h14_not, nargs = 2 },
 	[19] = { handler = h19_out, nargs = 1 },
 	[21] = { handler = h21_nop, nargs = 0 },
 }
