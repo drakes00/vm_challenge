@@ -10,6 +10,7 @@ local handlers = require("modules.handlers")
 local mmu = require("modules.mmu")
 local utils = require("modules.utils")
 local disassemble = require("modules.disassemble")
+local debugger = require("modules.debugger")
 
 local VM = {}
 
@@ -32,9 +33,7 @@ function VM.fetch()
 	local opcode = mmu.code[mmu.registers.pc]
 	local opcodeInfo = VM.opcodes[opcode]
 	if opcodeInfo == nil then
-		error(
-			string.format("[Illegal instruction] 0x%08x: 0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode)
-		)
+		print(string.format("%04x: #0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
 	else
 		return opcodeInfo.handler, opcodeInfo.nargs
 	end
@@ -62,10 +61,10 @@ function VM.step()
 	local handler, nargs = VM.fetch()
 	VM.next()
 
-	local args_vals = VM.loadArgs(nargs)
-	--
-	-- Using explicit bounds for unpack to handle potential nil values correctly
-	handler(table.unpack(args_vals, 1, nargs + 1))
+	if nargs ~= nil then
+		local args_vals = VM.loadArgs(nargs)
+		handler(table.unpack(args_vals, 1, nargs + 1))
+	end
 end
 
 --- Sets up the VM with the given binary and mode.
@@ -77,6 +76,9 @@ function VM.setup(filename, mode)
 
 	if mode == "disassemble" then
 		VM.opcodes = disassemble.opcodes
+	elseif mode == "debug" then
+		VM.opcodes = handlers.opcodes
+		VM.run = debugger.run
 	else
 		VM.opcodes = handlers.opcodes
 	end
@@ -101,6 +103,8 @@ function VM.main(args)
 	for i = 1, #args do
 		if args[i] == "-d" then
 			mode = "disassemble"
+		elseif args[i] == "-D" then
+			mode = "debug"
 		else
 			filename = args[i]
 		end
