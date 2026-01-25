@@ -37,7 +37,9 @@ end
 
 function TestRunit:testFetchIllegal()
 	mmu.registers.pc = 2 -- opcode 2 is not in vm.opcodes
-	lu.assertErrorMsgContains("[Illegal instruction]", vm.fetch)
+	local handler, nargs = vm.fetch()
+	lu.assertIsNil(handler)
+	lu.assertIsNil(nargs)
 end
 
 function TestRunit:testLoadArgsWithHoles()
