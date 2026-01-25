@@ -55,7 +55,7 @@ end
 -- @param mmu table The MMU, containing the PC.
 -- @param addr table The target address.
 local function h6_jmp(mmu, addr)
-	print(string.format("%04x: JMP 0x%04x", mmu.registers.pc - 3, addr.value))
+	print(string.format("%04x: JMP %04x", mmu.registers.pc - 3, addr.value))
 end
 
 --- Jump-if-true (7).
@@ -84,6 +84,26 @@ end
 -- @param c table The second operand.
 local function h9_add(mmu, a, b, c)
 	print(string.format("%04x: ADD %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
+end
+
+--- Multiplication (10).
+-- Disassembles the MULT instruction.
+-- @param mmu table The MMU, containing the PC.
+-- @param a table The destination register.
+-- @param b table The first operand.
+-- @param c table The second operand.
+local function h10_mult(mmu, a, b, c)
+	print(string.format("%04x: MULT %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
+end
+
+--- Modulo (11).
+-- Disassembles the MOD instruction.
+-- @param mmu table The MMU, containing the PC.
+-- @param a table The destination register.
+-- @param b table The first operand.
+-- @param c table The second operand.
+local function h11_mod(mmu, a, b, c)
+	print(string.format("%04x: MOD %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
 end
 
 --- Logical And (12).
@@ -115,6 +135,39 @@ local function h14_not(mmu, a, b)
 	print(string.format("%04x: NOT %x, %x", mmu.registers.pc - 4, a.value, b.value))
 end
 
+--- Read Memory (15).
+-- Disassembles the RMEM instruction.
+-- @param mmu table The MMU, containing the PC.
+-- @param a table The destination register.
+-- @param addr table The address to read from.
+local function h15_rmem(mmu, a, addr)
+	print(string.format("%04x: RMEM %x, %04x", mmu.registers.pc - 4, a.value, addr.value))
+end
+
+--- Write Memory (16).
+-- Disassembles the WMEM instruction.
+-- @param mmu table The MMU, containing the PC.
+-- @param addr table The address to write to.
+-- @param b table The value to write.
+local function h16_wmem(mmu, addr, b)
+	print(string.format("%04x: WMEM %04x, %x", mmu.registers.pc - 4, addr.value, b.value))
+end
+
+--- Call instruction (17).
+-- Disassembles the CALL instruction.
+-- @param mmu table The MMU, containing the PC.
+-- @param addr table The register containing the address to jump to.
+local function h17_call(mmu, reg)
+	print(string.format("%04x: CALL %x", mmu.registers.pc - 3, reg.value))
+end
+
+--- Return (18).
+-- Disassembles the RET instruction.
+-- @param mmu table The MMU, containing the PC.
+local function h18_ret(mmu)
+	print(string.format("%04x: RET", mmu.registers.pc - 2))
+end
+
 --- Output Character (19).
 -- Disassembles the OUT instruction.
 -- @param mmu table The MMU, containing the PC.
@@ -127,6 +180,14 @@ local function h19_out(mmu, char)
 		pchar = char.value
 	end
 	print(string.format("%04x: OUT %c", mmu.registers.pc - 3, pchar))
+end
+
+--- Input Character (20).
+-- Disassembles the IN instruction.
+-- @param mmu table The MMU, containing the PC.
+-- @param a table The register to store the input character in.
+local function h20_in(mmu, a)
+	print(string.format("%04x: IN %x", mmu.registers.pc - 3, a.value))
 end
 
 --- No Operation (21).
@@ -148,10 +209,17 @@ local opcodes = {
 	[7] = { handler = h7_jt, nargs = 2 },
 	[8] = { handler = h8_jf, nargs = 2 },
 	[9] = { handler = h9_add, nargs = 3 },
+	[10] = { handler = h10_mult, nargs = 3 },
+	[11] = { handler = h11_mod, nargs = 3 },
 	[12] = { handler = h12_and, nargs = 3 },
 	[13] = { handler = h13_or, nargs = 3 },
 	[14] = { handler = h14_not, nargs = 2 },
+	[15] = { handler = h15_rmem, nargs = 2 },
+	[16] = { handler = h16_wmem, nargs = 2 },
+	[17] = { handler = h17_call, nargs = 1 },
+	[18] = { handler = h18_ret, nargs = 0 },
 	[19] = { handler = h19_out, nargs = 1 },
+	[20] = { handler = h20_in, nargs = 1 },
 	[21] = { handler = h21_nop, nargs = 0 },
 }
 
