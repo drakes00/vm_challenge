@@ -122,15 +122,6 @@ function debugger.step()
 	debugger.args = {}
 	if debugger.nargs ~= nil then
 		debugger.args = debugger.loadArgs(debugger.nargs)
-		if debugger.disasHandler == disassemble.opcodes[4].handler then
-			-- Special case for EQ to show the comparison values
-			local a = debugger.args[2]
-			local b = debugger.args[3]
-			local c = debugger.args[4]
-			print(a, b, c)
-			utils.dump(mmu.registers.reg)
-			-- print(string.format("    ; EQ R%d (%d) == %d -> R%d", a.value - 0x8000, mmu.registers.reg[a.value - 0x8000 + 1].value, c.value, a.value - 0x8000))
-		end
 		-- Execute disassembly immediately so the user sees "Next Instruction"
 		debugger.execute(debugger.disasHandler, debugger.args, debugger.nargs)
 	end
@@ -179,4 +170,3 @@ function debugger.run()
 end
 
 return debugger
-
