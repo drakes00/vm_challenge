@@ -9,14 +9,14 @@ mmu.registers = {
 	pc = 1,
 	sp = 1,
 	reg = {
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
+		{ addr = 0x8000, value = 0 },
+		{ addr = 0x8001, value = 0 },
+		{ addr = 0x8002, value = 0 },
+		{ addr = 0x8003, value = 0 },
+		{ addr = 0x8004, value = 0 },
+		{ addr = 0x8005, value = 0 },
+		{ addr = 0x8006, value = 0 },
+		{ addr = 0x8007, value = 0 },
 	},
 }
 
@@ -37,7 +37,7 @@ end
 function mmu.mapAddress(addr)
 	-- print(string.format("[MMU] Accessing addr: 0x%04x", addr))
 	if addr < 0x8000 then
-		return { value = addr }
+		return { addr = addr, value = addr }
 	elseif addr < 0x8008 then
 		addr = addr % 0x8000
 		return mmu.registers.reg[addr + 1]

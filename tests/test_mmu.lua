@@ -8,14 +8,14 @@ function TestMMU:setUp()
 	mmu.code = {}
 	mmu.registers.pc = 1
 	mmu.registers.reg = {
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
+		{ addr = 0x8000, value = 0 },
+		{ addr = 0x8001, value = 0 },
+		{ addr = 0x8002, value = 0 },
+		{ addr = 0x8003, value = 0 },
+		{ addr = 0x8004, value = 0 },
+		{ addr = 0x8005, value = 0 },
+		{ addr = 0x8006, value = 0 },
+		{ addr = 0x8007, value = 0 },
 	}
 end
 

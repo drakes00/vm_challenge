@@ -24,7 +24,7 @@ end
 -- @param t table The table to inspect.
 local function dump(t)
 	for key, value in pairs(t) do
-		print(string.format("0x%04x (%d): ", key, key) .. value)
+		print(string.format("0x%04x (%d): %s", key, key, value))
 	end
 end
 

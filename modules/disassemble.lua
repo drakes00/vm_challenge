@@ -1,3 +1,16 @@
+--- Helper function to format arguments.
+-- Checks if the value is a register or a literal and formats accordingly.
+-- @param mmu table The MMU.
+-- @param val table The value to format.
+-- @return string The formatted string.
+local function format_arg(mmu, val)
+	if val.addr >= 0x8000 then
+		return string.format("R%x", val.addr - 0x8000)
+	else
+		return string.format("#%x", val.value)
+	end
+end
+
 --- Halt (0).
 -- Disassembles the HALT instruction.
 -- @param mmu table The MMU, containing the PC.
@@ -11,7 +24,7 @@ end
 -- @param reg table The register to set.
 -- @param val table The value to set the register to.
 local function h1_set(mmu, reg, val)
-	print(string.format("%04x: SET %x 0x%04x", mmu.registers.pc - 4, reg.value, val.value))
+	print(string.format("%04x: SET %s %s", mmu.registers.pc - 4, format_arg(mmu, reg), format_arg(mmu, val)))
 end
 
 --- Push (2).
@@ -19,7 +32,7 @@ end
 -- @param mmu table The MMU, containing the PC.
 -- @param reg table The value to push.
 local function h2_push(mmu, reg)
-	print(string.format("%04x: PUSH %x", mmu.registers.pc - 3, reg.value))
+	print(string.format("%04x: PUSH %s", mmu.registers.pc - 3, format_arg(mmu, reg)))
 end
 
 --- Pop (3).
@@ -27,7 +40,7 @@ end
 -- @param mmu table The MMU, containing the PC.
 -- @param reg table The register to store the popped value in.
 local function h3_pop(mmu, reg)
-	print(string.format("%04x: POP %x", mmu.registers.pc - 3, reg.value))
+	print(string.format("%04x: POP %s", mmu.registers.pc - 3, format_arg(mmu, reg)))
 end
 
 --- Equality (4).
@@ -37,7 +50,7 @@ end
 -- @param b table The first operand.
 -- @param c table The second operand.
 local function h4_eq(mmu, a, b, c)
-	print(string.format("%04x: EQ %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
+	print(string.format("%04x: EQ %s, %s, %s", mmu.registers.pc - 5, format_arg(mmu, a), format_arg(mmu, b), format_arg(mmu, c)))
 end
 
 --- Greater Than (5).
@@ -47,7 +60,7 @@ end
 -- @param b table The first operand.
 -- @param c table The second operand.
 local function h5_gt(mmu, a, b, c)
-	print(string.format("%04x: GT %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
+	print(string.format("%04x: GT %s, %s, %s", mmu.registers.pc - 5, format_arg(mmu, a), format_arg(mmu, b), format_arg(mmu, c)))
 end
 
 --- Jump (6).
@@ -55,7 +68,7 @@ end
 -- @param mmu table The MMU, containing the PC.
 -- @param addr table The target address.
 local function h6_jmp(mmu, addr)
-	print(string.format("%04x: JMP %04x", mmu.registers.pc - 3, addr.value))
+	print(string.format("%04x: JMP %s", mmu.registers.pc - 3, format_arg(mmu, addr)))
 end
 
 --- Jump-if-true (7).
@@ -64,7 +77,7 @@ end
 -- @param test table The value to test.
 -- @param addr table The target address.
 local function h7_jt(mmu, test, addr)
-	print(string.format("%04x: JT %x 0x%04x", mmu.registers.pc - 4, test.value, addr.value))
+	print(string.format("%04x: JT %s %s", mmu.registers.pc - 4, format_arg(mmu, test), format_arg(mmu, addr)))
 end
 
 --- Jump-if-false (8).
@@ -73,7 +86,7 @@ end
 -- @param test table The value to test.
 -- @param addr table The target address.
 local function h8_jf(mmu, test, addr)
-	print(string.format("%04x: JF %x 0x%04x", mmu.registers.pc - 4, test.value, addr.value))
+	print(string.format("%04x: JF %s %s", mmu.registers.pc - 4, format_arg(mmu, test), format_arg(mmu, addr)))
 end
 
 --- Addition (9).
@@ -83,7 +96,7 @@ end
 -- @param b table The first operand.
 -- @param c table The second operand.
 local function h9_add(mmu, a, b, c)
-	print(string.format("%04x: ADD %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
+	print(string.format("%04x: ADD %s, %s, %s", mmu.registers.pc - 5, format_arg(mmu, a), format_arg(mmu, b), format_arg(mmu, c)))
 end
 
 --- Multiplication (10).
@@ -93,7 +106,7 @@ end
 -- @param b table The first operand.
 -- @param c table The second operand.
 local function h10_mult(mmu, a, b, c)
-	print(string.format("%04x: MULT %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
+	print(string.format("%04x: MULT %s, %s, %s", mmu.registers.pc - 5, format_arg(mmu, a), format_arg(mmu, b), format_arg(mmu, c)))
 end
 
 --- Modulo (11).
@@ -103,7 +116,7 @@ end
 -- @param b table The first operand.
 -- @param c table The second operand.
 local function h11_mod(mmu, a, b, c)
-	print(string.format("%04x: MOD %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
+	print(string.format("%04x: MOD %s, %s, %s", mmu.registers.pc - 5, format_arg(mmu, a), format_arg(mmu, b), format_arg(mmu, c)))
 end
 
 --- Logical And (12).
@@ -113,7 +126,7 @@ end
 -- @param b table The first operand.
 -- @param c table The second operand.
 local function h12_and(mmu, a, b, c)
-	print(string.format("%04x: AND %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
+	print(string.format("%04x: AND %s, %s, %s", mmu.registers.pc - 5, format_arg(mmu, a), format_arg(mmu, b), format_arg(mmu, c)))
 end
 
 --- Logical Or (13).
@@ -123,7 +136,7 @@ end
 -- @param b table The first operand.
 -- @param c table The second operand.
 local function h13_or(mmu, a, b, c)
-	print(string.format("%04x: OR %x, %x, %x", mmu.registers.pc - 5, a.value, b.value, c.value))
+	print(string.format("%04x: OR %s, %s, %s", mmu.registers.pc - 5, format_arg(mmu, a), format_arg(mmu, b), format_arg(mmu, c)))
 end
 
 --- Logical Not (14).
@@ -132,7 +145,7 @@ end
 -- @param a table The destination register.
 -- @param b table The first operand.
 local function h14_not(mmu, a, b)
-	print(string.format("%04x: NOT %x, %x", mmu.registers.pc - 4, a.value, b.value))
+	print(string.format("%04x: NOT %s, %s", mmu.registers.pc - 4, format_arg(mmu, a), format_arg(mmu, b)))
 end
 
 --- Read Memory (15).
@@ -141,7 +154,7 @@ end
 -- @param a table The destination register.
 -- @param addr table The address to read from.
 local function h15_rmem(mmu, a, addr)
-	print(string.format("%04x: RMEM %x, %04x", mmu.registers.pc - 4, a.value, addr.value))
+	print(string.format("%04x: RMEM %s, %s", mmu.registers.pc - 4, format_arg(mmu, a), format_arg(mmu, addr)))
 end
 
 --- Write Memory (16).
@@ -150,7 +163,7 @@ end
 -- @param addr table The address to write to.
 -- @param b table The value to write.
 local function h16_wmem(mmu, addr, b)
-	print(string.format("%04x: WMEM %04x, %x", mmu.registers.pc - 4, addr.value, b.value))
+	print(string.format("%04x: WMEM %s, %s", mmu.registers.pc - 4, format_arg(mmu, addr), format_arg(mmu, b)))
 end
 
 --- Call instruction (17).
@@ -158,7 +171,7 @@ end
 -- @param mmu table The MMU, containing the PC.
 -- @param addr table The register containing the address to jump to.
 local function h17_call(mmu, reg)
-	print(string.format("%04x: CALL %x", mmu.registers.pc - 3, reg.value))
+	print(string.format("%04x: CALL %s", mmu.registers.pc - 3, format_arg(mmu, reg)))
 end
 
 --- Return (18).
