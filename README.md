@@ -23,3 +23,24 @@ $ echo -n "<Code Here>" | md5sum
 - e09640936b3ef532b7b8e83ce8f125f4
 - 4873cf6b76f62ac7d5a53605b2535a0c
 - d0c54d4ed7f943280ce3e19532dbb1a6
+
+## TODO
+
+- Finish the challenge
+- Disassembler
+- Debugger
+- Compilers:
+  - Simple languages:
+    - From [Execode](https://esolangs.org/wiki/Execode)
+    - From [brainfuck](https://esolangs.org/wiki/Brainfuck) and its extension [brainfunct](https://esolangs.org/wiki/Brainfunct)
+    - From [Pointing](https://esolangs.org/wiki/Pointing)
+  - A bit more complex:
+    - From a subset of Lua
+    - From a subset of [Roc](https://www.roc-lang.org)?
+  - Graphical languages:
+    - From [Rail](https://esolangs.org/wiki/Rail)
+    - From [Befunge](https://esolangs.org/wiki/Befunge)
+  - Cellular automata (will require writing a simulator in assembly and then convert the initial state?):
+    - [Wireworld](https://esolangs.org/wiki/User:PkmnQ/WireWorld)
+    - Conway's game of life
+    - [Langton's ants](https://esolangs.org/wiki/Langton%27s_ant)
