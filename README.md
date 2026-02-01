@@ -27,8 +27,8 @@ $ echo -n "<Code Here>" | md5sum
 ## TODO
 
 - Finish the challenge
-- Disassembler
-- Debugger
+- ~~Disassembler~~
+- ~~Debugger~~
 - Compilers:
   - Simple languages:
     - From [Execode](https://esolangs.org/wiki/Execode)
@@ -41,7 +41,7 @@ $ echo -n "<Code Here>" | md5sum
   - Graphical languages:
     - From [Rail](https://esolangs.org/wiki/Rail)
     - From [Befunge](https://esolangs.org/wiki/Befunge)
-  - Cellular automata (will require writing a simulator in assembly and then convert the initial state?):
+  - Cellular automata (will require writing a simulator in assembly and then converting the initial state?):
     - [Wireworld](https://esolangs.org/wiki/User:PkmnQ/WireWorld)
     - Conway's game of life
     - [Langton's ants](https://esolangs.org/wiki/Langton%27s_ant)
