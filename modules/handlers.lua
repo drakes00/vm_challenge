@@ -155,6 +155,15 @@ local function h14_not(_, a, b)
 	a.value = ~b.value & 0x7fff
 end
 
+--- Read Memory (15).
+-- Reads the value located at address <addr> in memory and put in in register <a>.
+-- @param mmu table MMU table to access memory.
+-- @param a table The destination register.
+-- @param addr table The address to read from.
+local function h15_rmem(mmu, a, addr)
+	a.value = mmu.code[addr.value + 1]
+end
+
 --- Call instruction (17).
 -- Stores the next instruction address on the stack and jumps to the address contained in the register.
 -- @param mmu table The MMU, containing the PC.
@@ -194,6 +203,7 @@ local opcodes = {
 	[12] = { handler = h12_and, nargs = 3 },
 	[13] = { handler = h13_or, nargs = 3 },
 	[14] = { handler = h14_not, nargs = 2 },
+	[15] = { handler = h15_rmem, nargs = 2 },
 	[17] = { handler = h17_call, nargs = 1 },
 	[19] = { handler = h19_out, nargs = 1 },
 	[21] = { handler = h21_nop, nargs = 0 },

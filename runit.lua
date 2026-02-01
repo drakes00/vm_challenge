@@ -33,8 +33,9 @@ function VM.fetch()
 	local opcode = mmu.code[mmu.registers.pc]
 	local opcodeInfo = VM.opcodes[opcode]
 	if opcodeInfo == nil then
-		error(string.format("Illegal instruction at %04x: #0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
-		-- print(string.format("%04x: #0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
+		if VM.mode == "disassemble" then
+			print(string.format("%04x: #0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
+		end
 	else
 		return opcodeInfo.handler, opcodeInfo.nargs
 	end
@@ -97,15 +98,15 @@ end
 -- Parses command line arguments and starts the VM or disassembler.
 function VM.main(args)
 	local filename
-	local mode = "run"
+	VM.mode = "run"
 
 	args = args or _G.arg
 
 	for i = 1, #args do
 		if args[i] == "-d" then
-			mode = "disassemble"
+			VM.mode = "disassemble"
 		elseif args[i] == "-D" then
-			mode = "debug"
+			VM.mode = "debug"
 		else
 			filename = args[i]
 		end
@@ -116,7 +117,7 @@ function VM.main(args)
 		os.exit(1)
 	end
 
-	VM.setup(filename, mode)
+	VM.setup(filename, VM.mode)
 	VM.run()
 end
 
@@ -126,4 +127,3 @@ if not pcall(debug.getlocal, 4, 1) then
 end
 
 return VM
-
