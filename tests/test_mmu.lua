@@ -7,6 +7,8 @@ function TestMMU:setUp()
 	-- Reset state before each test
 	mmu.code = {}
 	mmu.registers.pc = 1
+	mmu.registers.sp = 0
+	mmu.stack = {}
 	mmu.registers.reg = {
 		{ addr = 0x8000, value = 0 },
 		{ addr = 0x8001, value = 0 },
@@ -17,6 +19,11 @@ function TestMMU:setUp()
 		{ addr = 0x8006, value = 0 },
 		{ addr = 0x8007, value = 0 },
 	}
+end
+
+function TestMMU:testStackInitialization()
+	lu.assertEquals(mmu.registers.sp, 0)
+	lu.assertEquals(#mmu.stack, 0)
 end
 
 function TestMMU:testMapAddressLiteral()

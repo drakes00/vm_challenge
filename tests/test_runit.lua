@@ -8,14 +8,14 @@ function TestRunit:setUp()
 	mmu.code = { 1, 2, 3 } -- Dummy code
 	mmu.registers.pc = 1
 	mmu.registers.reg = {
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
-		{ value = 0 },
+		{ addr = 0x8000, value = 0 },
+		{ addr = 0x8001, value = 0 },
+		{ addr = 0x8002, value = 0 },
+		{ addr = 0x8003, value = 0 },
+		{ addr = 0x8004, value = 0 },
+		{ addr = 0x8005, value = 0 },
+		{ addr = 0x8006, value = 0 },
+		{ addr = 0x8007, value = 0 },
 	}
 	vm.opcodes = {
 		[1] = { handler = function() end, nargs = 2 },
@@ -37,9 +37,7 @@ end
 
 function TestRunit:testFetchIllegal()
 	mmu.registers.pc = 2 -- opcode 2 is not in vm.opcodes
-	local handler, nargs = vm.fetch()
-	lu.assertIsNil(handler)
-	lu.assertIsNil(nargs)
+	lu.assertErrorMsgContains("Illegal instruction", vm.fetch)
 end
 
 function TestRunit:testLoadArgsWithHoles()

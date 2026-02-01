@@ -7,7 +7,7 @@ function TestHandlers:setUp()
 	self.mmu = {
 		registers = {
 			pc = 100,
-			sp = 1,
+			sp = 0,
 			reg = {
 				{ value = 0 },
 				{ value = 0 },
@@ -62,7 +62,7 @@ function TestHandlers:testPush()
 	
 	h(self.mmu, reg)
 	
-	lu.assertEquals(self.mmu.registers.sp, 2)
+	lu.assertEquals(self.mmu.registers.sp, 1)
 	lu.assertEquals(self.mmu.stack[1], 12345)
 end
 
@@ -72,18 +72,18 @@ function TestHandlers:testPop()
 	
 	-- Setup stack
 	self.mmu.stack[1] = 54321
-	self.mmu.registers.sp = 2
+	self.mmu.registers.sp = 1
 	
 	h(self.mmu, dest)
 	
 	lu.assertEquals(dest.value, 54321)
-	lu.assertEquals(self.mmu.registers.sp, 1)
+	lu.assertEquals(self.mmu.registers.sp, 0)
 end
 
 function TestHandlers:testPopEmptyStack()
 	local h = handlers.opcodes[3].handler
 	local dest = self.mmu.registers.reg[1]
-	self.mmu.registers.sp = 1
+	self.mmu.registers.sp = 0
 	
 	lu.assertErrorMsgContains("Stack Underflow", h, self.mmu, dest)
 end
