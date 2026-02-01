@@ -106,6 +106,26 @@ local function h9_add(_, a, b, c)
 	a.value = (b.value + c.value) % 0x8000
 end
 
+--- Multiplication (10).
+-- Assign into <a> the product of <b> and <c> (modulo 32768).
+-- @param _ table Unused MMU table.
+-- @param a table The register to store the result in.
+-- @param b table The first operand.
+-- @param c table The second operand.
+local function h10_mult(_, a, b, c)
+	a.value = (b.value * c.value) % 0x8000
+end
+
+--- Modulo (11).
+-- Assign into <a> the remainder of <b> divided by <c>.
+-- @param _ table Unused MMU table.
+-- @param a table The register to store the result in.
+-- @param b table The first operand.
+-- @param c table The second operand.
+local function h11_mod(_, a, b, c)
+	a.value = (b.value % c.value)
+end
+
 --- Logical And (12).
 -- Stores into <a> the bitwise AND of <b> and <c>.
 -- @param _ table Unused MMU table.
@@ -169,6 +189,8 @@ local opcodes = {
 	[7] = { handler = h7_jt, nargs = 2 },
 	[8] = { handler = h8_jf, nargs = 2 },
 	[9] = { handler = h9_add, nargs = 3 },
+	[10] = { handler = h10_mult, nargs = 3 },
+	[11] = { handler = h11_mod, nargs = 3 },
 	[12] = { handler = h12_and, nargs = 3 },
 	[13] = { handler = h13_or, nargs = 3 },
 	[14] = { handler = h14_not, nargs = 2 },

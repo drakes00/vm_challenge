@@ -168,6 +168,36 @@ function TestHandlers:testAdd()
 	lu.assertEquals(dest.value, 2) -- (32760 + 10) % 32768 = 2
 end
 
+function TestHandlers:testMult()
+	local h = handlers.opcodes[10].handler
+	local dest = self.mmu.registers.reg[1]
+
+	-- Simple multiplication
+	h(self.mmu, dest, { value = 10 }, { value = 20 })
+	lu.assertEquals(dest.value, 200)
+
+	-- Multiplication with modulo
+	h(self.mmu, dest, { value = 1000 }, { value = 40 })
+	lu.assertEquals(dest.value, 7232) -- (1000 * 40) = 40000. 40000 % 32768 = 7232
+end
+
+function TestHandlers:testMod()
+	local h = handlers.opcodes[11].handler
+	local dest = self.mmu.registers.reg[1]
+
+	-- Simple modulo
+	h(self.mmu, dest, { value = 10 }, { value = 3 })
+	lu.assertEquals(dest.value, 1)
+
+	-- Round modulo
+	h(self.mmu, dest, { value = 10 }, { value = 2 })
+	lu.assertEquals(dest.value, 0)
+
+	-- Modulo where a < b
+	h(self.mmu, dest, { value = 5 }, { value = 10 })
+	lu.assertEquals(dest.value, 5)
+end
+
 function TestHandlers:testAnd()
 	local h = handlers.opcodes[12].handler
 	local dest = self.mmu.registers.reg[1]
