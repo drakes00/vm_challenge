@@ -51,6 +51,22 @@ function debugger.continue()
 	end
 end
 
+function debugger.infoReg()
+	-- We use debugger.pc to show the address of the currently displayed instruction
+	print(string.format("PC: %d (0x%04x)", utils.realAddr(debugger.pc), utils.realAddr(debugger.pc)))
+	print(string.format("SP: %d (0x%04x)", mmu.registers.sp, mmu.registers.sp))
+	for i, reg in ipairs(mmu.registers.reg) do
+		print(string.format("R%d: %d", i - 1, reg.value))
+	end
+end
+
+function debugger.infoStack()
+	for i=0, #mmu.stack-1 do
+		local addr = #mmu.stack-i
+		print(string.format("%04x: %d", addr, mmu.stack[addr]))
+	end
+end
+
 --- Fetches the instruction at the current PC.
 -- Retrieves the execution handler and disassembly handler for the opcode.
 -- If the opcode is unknown, it prints an error format and returns nil.
@@ -65,7 +81,8 @@ function debugger.fetch()
 		assert(opcodeInfo.nargs == disasInfo.nargs)
 		return opcodeInfo.handler, disasInfo.handler, opcodeInfo.nargs
 	else
-		print(string.format("%04x: #0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
+		error(string.format("Illegal instruction at %04x: #0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
+		-- print(string.format("%04x: #0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
 	end
 end
 
@@ -157,14 +174,10 @@ function debugger.run()
 			end
 		elseif cmd == "c" or cmd == "cont" or cmd == "continue" then
 			debugger.continue()
-		elseif cmd == "r" or cmd == "regs" then
-			-- Dump registers
-			-- We use debugger.pc to show the address of the currently displayed instruction
-			print(string.format("PC: %d (0x%04x)", utils.realAddr(debugger.pc), utils.realAddr(debugger.pc)))
-			print(string.format("SP: %d (0x%04x)", mmu.registers.sp, mmu.registers.sp))
-			for i, reg in ipairs(mmu.registers.reg) do
-				print(string.format("R%d: %d", i - 1, reg.value))
-			end
+		elseif cmd == "ir" or cmd == "info r" or cmd == "info reg" then
+			debugger.infoReg()
+		elseif cmd == "is" or cmd == "info s" or cmd == "info stack" then
+			debugger.infoStack()
 		end
 	end
 end

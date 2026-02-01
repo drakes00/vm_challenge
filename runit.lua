@@ -33,7 +33,8 @@ function VM.fetch()
 	local opcode = mmu.code[mmu.registers.pc]
 	local opcodeInfo = VM.opcodes[opcode]
 	if opcodeInfo == nil then
-		print(string.format("%04x: #0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
+		error(string.format("Illegal instruction at %04x: #0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
+		-- print(string.format("%04x: #0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
 	else
 		return opcodeInfo.handler, opcodeInfo.nargs
 	end

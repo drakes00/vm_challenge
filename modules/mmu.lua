@@ -7,7 +7,7 @@ mmu.code = {}
 -- This will later contain all 8 registers.
 mmu.registers = {
 	pc = 1,
-	sp = 1,
+	sp = 0,
 	reg = {
 		{ addr = 0x8000, value = 0 },
 		{ addr = 0x8001, value = 0 },

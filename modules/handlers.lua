@@ -19,8 +19,8 @@ end
 -- @param mmu table The MMU, containing the stack and registers.
 -- @param reg table The value to push.
 local function h2_push(mmu, reg)
-	mmu.stack[mmu.registers.sp] = reg.value
 	mmu.registers.sp = mmu.registers.sp + 1
+	mmu.stack[mmu.registers.sp] = reg.value
 end
 
 --- Pop (3).
@@ -29,12 +29,12 @@ end
 -- @param mmu table The MMU, containing the stack and registers.
 -- @param reg table The register to store the popped value in.
 local function h3_pop(mmu, reg)
-	if mmu.registers.sp <= 1 then
+	if mmu.registers.sp <= 0 then
 		error("[Stack Underflow] Cannot pop from empty stack")
 	end
-	mmu.registers.sp = mmu.registers.sp - 1
 	reg.value = mmu.stack[mmu.registers.sp]
 	mmu.stack[mmu.registers.sp] = nil
+	mmu.registers.sp = mmu.registers.sp - 1
 end
 
 --- Equality (4).
