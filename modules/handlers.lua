@@ -164,6 +164,15 @@ local function h15_rmem(mmu, a, addr)
 	a.value = mmu.code[addr.value + 1]
 end
 
+--- Write Memory (16).
+-- Writes the value located in register <b> at address <addr> in memory.
+-- @param mmu table The MMU, containing the PC.
+-- @param addr table The address to write to.
+-- @param b table The value to write.
+local function h16_wmem(mmu, addr, b)
+	mmu.code[addr.value + 1] = b.value
+end
+
 --- Call instruction (17).
 -- Stores the next instruction address on the stack and jumps to the address contained in the register.
 -- @param mmu table The MMU, containing the PC.
@@ -173,12 +182,22 @@ local function h17_call(mmu, reg)
 	h6_jmp(mmu, reg)
 end
 
+local function h18_ret(mmu)
+	local ret = { value = nil }
+	h3_pop(mmu, ret)
+	mmu.registers.pc = ret.value
+end
+
 --- Output Character (19).
 -- Writes a single character to the standard output.
 -- @param _ table Unused MMU table.
 -- @param char table The ASCII code of the character to print.
 local function h19_out(_, char)
 	io.write(string.char(char.value))
+end
+
+local function h20_in(_, reg)
+	reg.value = string.byte(io.read())
 end
 
 --- No Operation (21).
@@ -204,8 +223,11 @@ local opcodes = {
 	[13] = { handler = h13_or, nargs = 3 },
 	[14] = { handler = h14_not, nargs = 2 },
 	[15] = { handler = h15_rmem, nargs = 2 },
+	[16] = { handler = h16_wmem, nargs = 2 },
 	[17] = { handler = h17_call, nargs = 1 },
+	[18] = { handler = h18_ret, nargs = 0 },
 	[19] = { handler = h19_out, nargs = 1 },
+	[20] = { handler = h20_in, nargs = 1 },
 	[21] = { handler = h21_nop, nargs = 0 },
 }
 

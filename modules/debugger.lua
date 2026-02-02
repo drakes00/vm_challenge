@@ -81,8 +81,8 @@ function debugger.fetch()
 		assert(opcodeInfo.nargs == disasInfo.nargs)
 		return opcodeInfo.handler, disasInfo.handler, opcodeInfo.nargs
 	else
-		error(string.format("Illegal instruction at %04x: #0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
-		-- print(string.format("%04x: #0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
+		-- error(string.format("Illegal instruction at %04x: #0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
+		print(string.format("%04x: #0x%02x (%d)", utils.realAddr(mmu.registers.pc), opcode, opcode))
 	end
 end
 

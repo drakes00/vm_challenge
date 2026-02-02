@@ -264,7 +264,7 @@ end
 -- @param mmu table The MMU, containing the PC.
 -- @param a table The register to store the input character in.
 local function h20_in(mmu, a)
-	print(string.format("%04x: IN %x", mmu.registers.pc - 3, a.value))
+	print(string.format("%04x: IN %s", mmu.registers.pc - 3, format_arg(mmu, a)))
 end
 
 --- No Operation (21).
