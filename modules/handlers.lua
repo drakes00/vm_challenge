@@ -197,7 +197,7 @@ local function h19_out(_, char)
 end
 
 local function h20_in(_, reg)
-	reg.value = string.byte(io.read())
+	reg.value = string.byte(io.read(1))
 end
 
 --- No Operation (21).
